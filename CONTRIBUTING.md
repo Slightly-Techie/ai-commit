@@ -1,7 +1,3 @@
-#### `CONTRIBUTING.md`
-This file guides potential contributors on how to get started with development.
-
-```markdown
 # Contributing to ai-commit
 
 Thank you for your interest in contributing! We welcome bug reports, feature requests, and pull requests.
