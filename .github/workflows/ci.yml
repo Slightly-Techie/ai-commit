@@ -27,5 +27,5 @@ jobs:
       - name: Lint with ruff
         run: ruff check .
 
-      - name: Test with pytest
-        run: pytest
+      - name: Test with pytest and fail under 90% coverage
+        run: pytest --cov=ai_commit --cov-fail-under=90
