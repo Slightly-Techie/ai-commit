@@ -50,6 +50,9 @@ dev = [
 [tool.hatch.version]
 path = "src/ai_commit/__init__.py"
 
+[tool.hatch.build.targets.wheel]
+packages = ["src/ai_commit"]
+
 # Configuration for Ruff (linter and formatter)
 [tool.ruff]
 line-length = 88

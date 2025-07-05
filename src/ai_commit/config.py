@@ -1,5 +1,6 @@
 import os
 
+
 def _get_env_var(name: str, default: str) -> str:
     """
     Retrieves an environment variable, returning a default if not set.

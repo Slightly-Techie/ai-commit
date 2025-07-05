@@ -1,6 +1,7 @@
-import os
 import pytest
+
 from ai_commit import config
+
 
 # Fixture to automatically clean up environment variables after each test
 @pytest.fixture(autouse=True)
