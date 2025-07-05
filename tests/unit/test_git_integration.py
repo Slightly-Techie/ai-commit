@@ -1,4 +1,5 @@
 import subprocess
+from unittest.mock import MagicMock
 
 import pytest
 
@@ -60,3 +61,31 @@ def test_get_staged_diff_git_error_propagates_exception(monkeypatch):
 
     assert exc_info.value.returncode == 128
     assert "fatal: not a git repository" in exc_info.value.stderr
+
+
+# tests/unit/test_git_integration.py
+# (Add this new test function to the existing file)
+
+def test_commit_calls_subprocess_correctly(monkeypatch):
+    """
+    Verify commit() calls `git commit -m <message>` via subprocess.run.
+    """
+    # Arrange
+    test_message = "feat: add interactive commit feature"
+    # We need a mock to capture the arguments passed to subprocess.run
+    mock_run = MagicMock(
+        return_value=subprocess.CompletedProcess(args=[], returncode=0))
+    monkeypatch.setattr(subprocess, "run", mock_run)
+
+    # Act
+    git_integration.commit(test_message)
+
+    # Assert
+    expected_command = ["git", "commit", "-m", test_message]
+    mock_run.assert_called_once_with(
+        expected_command,
+        check=True,
+        capture_output=True,
+        text=True,
+        encoding="utf-8"
+    )

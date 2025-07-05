@@ -39,3 +39,23 @@ def get_staged_diff() -> str:
         )
 
     return result.stdout
+
+
+def commit(message: str) -> None:
+    """
+    Commits staged changes with the provided message using `git commit -m`.
+
+    Args:
+        message: The commit message to use.
+
+    Raises:
+        subprocess.CalledProcessError: If the git command fails.
+    """
+    command = ["git", "commit", "-m", message]
+    subprocess.run(
+        command,
+        check=True,
+        capture_output=True,
+        text=True,
+        encoding="utf-8"
+    )
