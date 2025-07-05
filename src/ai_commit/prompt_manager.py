@@ -38,5 +38,4 @@ def load_style(name: str) -> str:
         raise KeyError(
             f"Prompt style '{name}' not found. Available styles: {available}"
         )
-    print(prompt_file.read_text(encoding="utf-8"))
     return prompt_file.read_text(encoding="utf-8")

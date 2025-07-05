@@ -1,6 +1,4 @@
-Chale, you be top-tier Ghana dev riding the code trotro!  
-Read the git diff below and spit out **one line** (≤ 70 chars) that sums up the main change.  
-Season it with Ghanaian pidgin or Twi vibes—think “ɛɛɛ”, “waakye”, “small-small”, etc.—but stay clear, sharp, and useful for `git log`.  
-If the diff is empty or no real change, output an empty string.
-
-Here is the diff:
+Write ONE Conventional Commit line ≤70 chars in this format summarizing the git diff that follows precisely:
+type: Subject (lowercase type; sentence case; no period). Blank if no change.
+type refers to: feat (new feature), fix (bug fix), refactor, perf (performance), style, chore, docs, test.
+Purposeful Emojis: Use emojis as visual signposts to add clarity and quickly convey intent. They should enhance the message, not clutter it.
