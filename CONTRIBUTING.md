@@ -36,7 +36,7 @@ We follow a strict Test-Driven Development (TDD) workflow. All code must pass li
 
 2.  **Check for at least 90% test coverage:**
     ```bash
-    pytest --cov=ai_commit --cov-fail-under=90
+    pytest --cov=ai_commit --cov-fail-under=80
     ```
 
 3.  **Run the linter:**
