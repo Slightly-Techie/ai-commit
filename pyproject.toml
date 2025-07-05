@@ -37,6 +37,9 @@ dependencies = [
 Homepage = "https://github.com/Slightly-Techie/ai-commit"
 Repository = "https://github.com/Slightly-Techie/ai-commit"
 
+[project.scripts]
+ai-commit = "ai_commit.cli:app"
+
 [project.optional-dependencies]
 dev = [
     "pytest>=8",
