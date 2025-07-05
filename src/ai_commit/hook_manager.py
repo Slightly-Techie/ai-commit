@@ -28,7 +28,7 @@ fi
 # Re-connect stdin to the terminal for interactive prompts
 exec < /dev/tty
 # The `ai-commit` command must be in the user's PATH
-ai-commit
+ai-commit --live
 """
 
 

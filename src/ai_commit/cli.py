@@ -8,7 +8,13 @@ import typer
 from rich.prompt import Prompt
 from typing_extensions import Annotated
 
-from ai_commit import git_integration, llm_provider, prompt_manager, service
+from ai_commit import (
+    git_integration,
+    hook_manager,
+    llm_provider,
+    prompt_manager,
+    service,
+)
 
 app = typer.Typer()
 
@@ -64,8 +70,9 @@ async def _run_interactive_flow(style: str, provider: llm_provider.LLMProvider):
             rich.print("[yellow]Commit aborted.[/yellow]")
             break
 
-@app.command()
+@app.callback(invoke_without_command=True)
 def main(
+    ctx: typer.Context,
     style: Annotated[
         str,
         typer.Option(
@@ -94,6 +101,10 @@ def main(
     """
     Generates an AI-powered commit message for your staged changes.
     """
+
+    if ctx.invoked_subcommand is not None:
+        return
+
     try:
         provider: llm_provider.OllamaProvider()
         if dry_run:
@@ -133,6 +144,24 @@ def main(
     except llm_provider.OllamaConnectionError as e:
         rich.print(f"[bold red]Ollama Error:[/bold red] {e}")
         raise typer.Exit(code=1)
+    except Exception as e:
+        rich.print(f"[bold red]An unexpected error occurred:[/bold red] {e}")
+        raise typer.Exit(code=1)
+
+
+@app.command(name="install-hook")
+def install_hook_command(
+    is_global: Annotated[
+        bool,
+        typer.Option("--global", help="Install the hook globally.")] = False,
+):
+    """
+    Installs the prepare-commit-msg git hook.
+    """
+    try:
+        hook_path = hook_manager.install_hook(is_global)
+        rich.print(
+            f"[bold green]✔ Hook installed successfully at:[/bold green] {hook_path}")
     except Exception as e:
         rich.print(f"[bold red]An unexpected error occurred:[/bold red] {e}")
         raise typer.Exit(code=1)
