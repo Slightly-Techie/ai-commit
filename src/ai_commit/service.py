@@ -1,6 +1,7 @@
 from ai_commit import prompt_manager
 from ai_commit.llm_provider import LLMProvider
 
+
 def generate_commit(diff: str, style: str, provider: LLMProvider) -> str:
     """
     Generates a commit message by orchestrating prompt loading and an LLM call.

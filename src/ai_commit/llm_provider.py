@@ -1,5 +1,6 @@
 from typing import Protocol
 
+
 class LLMProvider(Protocol):
     """
     Defines the interface for any class that can complete a prompt.
