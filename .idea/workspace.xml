@@ -5,9 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d71c23a1-1cd2-48ba-9673-0dd60f58b70c" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/ai_commit/hook_manager.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/unit/test_hook_manager.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pyproject.toml" beforeDir="false" afterPath="$PROJECT_DIR$/pyproject.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ai_commit/cli.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/ai_commit/cli.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ai_commit/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/ai_commit/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ai_commit/llm_provider.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/ai_commit/llm_provider.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ai_commit/prompt_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/ai_commit/prompt_manager.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ai_commit/prompts/conventional.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/ai_commit/prompts/conventional.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ai_commit/service.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/ai_commit/service.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/unit/test_cli.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/unit/test_cli.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/unit/test_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/unit/test_config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/unit/test_llm_provider.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/unit/test_llm_provider.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/unit/test_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/unit/test_service.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -128,7 +137,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1751719537625</updated>
-      <workItem from="1751719538987" duration="8329000" />
+      <workItem from="1751719538987" duration="15242000" />
     </task>
     <servers />
   </component>

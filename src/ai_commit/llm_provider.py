@@ -1,5 +1,13 @@
 from typing import Protocol, runtime_checkable
 
+import httpx
+
+from ai_commit import config
+
+
+class OllamaConnectionError(Exception):
+    """Custom exception for errors when connecting to the Ollama API."""
+    pass
 
 @runtime_checkable
 class LLMProvider(Protocol):
@@ -9,7 +17,7 @@ class LLMProvider(Protocol):
     This abstraction allows the core service to remain decoupled from the
     specific implementation of an LLM client (e.g., Ollama, OpenAI).
     """
-    def complete(self, system_prompt: str, user_prompt: str) -> str:
+    async def complete(self, system_prompt: str, user_prompt: str) -> str:
         """
         Generates a completion based on system and user prompts.
 
@@ -31,7 +39,7 @@ class MockProvider:
     predictable, templated string that includes the prompts it received.
     This is useful for unit testing components that rely on an LLMProvider.
     """
-    def complete(self, system_prompt: str, user_prompt: str) -> str:
+    async def complete(self, system_prompt: str, user_prompt: str) -> str:
         """
         Returns a hardcoded, formatted string for test verification.
         """
@@ -40,3 +48,39 @@ class MockProvider:
             f"System Prompt: {system_prompt}\n"
             f"User Prompt: {user_prompt}"
         )
+
+
+class OllamaProvider:
+    """A real LLMProvider that connects to an Ollama instance."""
+
+    async def complete(self, system_prompt: str, user_prompt: str) -> str:
+        """Generates a completion using the Ollama API."""
+        url = config.get_ollama_url()
+        model = config.get_ollama_model()
+
+        prompt = f"{system_prompt}\n\n{user_prompt}"
+        payload = {
+            "model": model,
+            "prompt": prompt,
+            "stream": False,
+            "options": {
+                "temperature": 0.25,
+                "top_p": 0.9,
+                "max_tokens": 40
+            }
+        }
+
+        print(payload)
+
+        try:
+            async with httpx.AsyncClient(timeout=30.0) as client:
+                response = await client.post(f"{url}/api/generate", json=payload)
+                response.raise_for_status()
+                return response.json()["response"].strip()
+        except httpx.HTTPStatusError as e:
+            raise OllamaConnectionError(
+                f"Ollama API returned an error: {e.response.status_code} "
+                f"- {e.response.text}"
+            ) from e
+        except httpx.RequestError as e:
+            raise OllamaConnectionError(f"Connection to Ollama failed: {e}") from e

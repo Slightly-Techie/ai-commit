@@ -2,7 +2,7 @@ from ai_commit import prompt_manager
 from ai_commit.llm_provider import LLMProvider
 
 
-def generate_commit(diff: str, style: str, provider: LLMProvider) -> str:
+async def generate_commit(diff: str, style: str, provider: LLMProvider) -> str:
     """
     Generates a commit message by orchestrating prompt loading and an LLM call.
 
@@ -24,7 +24,7 @@ def generate_commit(diff: str, style: str, provider: LLMProvider) -> str:
     user_prompt = diff
 
     # Call the provider to get the completion
-    completion = provider.complete(
+    completion = await provider.complete(
         system_prompt=system_prompt,
         user_prompt=user_prompt
     )

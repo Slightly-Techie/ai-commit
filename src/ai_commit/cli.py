@@ -1,3 +1,4 @@
+import asyncio
 import os
 import subprocess
 import tempfile
@@ -10,12 +11,6 @@ from typing_extensions import Annotated
 from ai_commit import git_integration, llm_provider, prompt_manager, service
 
 app = typer.Typer()
-
-class OllamaProvider(llm_provider.LLMProvider):
-    def complete(self, system_prompt: str, user_prompt: str) -> str:
-        rich.print(
-            "[bold red]Error: Real Ollama provider is not implemented yet.[/bold red]")
-        raise typer.Exit(code=1)
 
 
 def _handle_edit_flow(initial_message: str) -> str:
@@ -43,12 +38,38 @@ def _handle_edit_flow(initial_message: str) -> str:
     return edited_message if edited_message else initial_message
 
 
+async def _run_interactive_flow(style: str, provider: llm_provider.LLMProvider):
+    """Contains the core async logic for the interactive session."""
+    diff = git_integration.get_staged_diff()
+    rich.print("Generating commit message...")
+    commit_message = await service.generate_commit(
+        diff=diff, style=style, provider=provider
+    )
+
+    while True:
+        rich.print("\n[bold green]Generated Commit Message:[/bold green]")
+        rich.print(f"[cyan]{commit_message}[/cyan]\n")
+        choice = Prompt.ask(
+            "[bold]Commit with this message? [/bold]",
+            choices=["y", "n", "e"],
+            default="y"
+        ).lower()
+        if choice == 'y':
+            git_integration.commit(commit_message)
+            rich.print("[bold green]✔ Commit successful![/bold green]")
+            break
+        elif choice == 'e':
+            commit_message = _handle_edit_flow(commit_message)
+        else:
+            rich.print("[yellow]Commit aborted.[/yellow]")
+            break
+
 @app.command()
 def main(
     style: Annotated[
         str,
         typer.Option(
-            help="The prompt style to use (e.g., 'conventional', 'pirate')."
+            help="The prompt style to use (e.g., 'conventional', 'ghanaian', 'pirate')."
         ),
     ] = "conventional",
     print_commit: Annotated[
@@ -63,52 +84,43 @@ def main(
             help="Run in dry-run mode using a mock LLM provider.",
         ),
     ] = False,
+    live: Annotated[
+        bool,
+        typer.Option("--live",
+                     help="Use the real Ollama provider "
+                          "(requires Ollama to be running)."),
+    ] = False,
 ):
     """
     Generates an AI-powered commit message for your staged changes.
     """
     try:
-        provider: llm_provider.LLMProvider
+        provider: llm_provider.OllamaProvider()
         if dry_run:
             provider = llm_provider.MockProvider()
             rich.print(
                 "[bold yellow]Dry run mode: Using Mock LLM Provider.[/bold yellow]")
+        elif live:
+            provider = llm_provider.OllamaProvider()
+            rich.print("[bold blue]Live mode: Using real Ollama provider.[/bold blue]")
         else:
-            provider = OllamaProvider()
+            rich.print(
+                "[bold red]Error:[/bold red] "
+                "Please specify either [cyan]--live[/cyan] or [cyan]--dry-run[/cyan].")
+            raise typer.Exit(code=1)
 
-        diff = git_integration.get_staged_diff()
-        rich.print("Generating commit message...")
-
-        commit_message = service.generate_commit(
-            diff=diff,
-            style=style,
-            provider=provider
-        )
 
         if print_commit:
+            diff = git_integration.get_staged_diff()
+            commit_message = asyncio.run(service.generate_commit(
+                diff=diff, style=style, provider=provider
+            ))
             rich.print("\n[bold green]Generated Commit Message:[/bold green]")
             rich.print(f"[cyan]{commit_message}[/cyan]")
             return
 
-        while True:
-            rich.print("\n[bold green]Generated Commit Message:[/bold green]")
-            rich.print(f"[cyan]{commit_message}[/cyan]\n")
+        asyncio.run(_run_interactive_flow(style, provider))
 
-            choice = Prompt.ask(
-                "[bold]Commit with this message? [/bold]",
-                choices=["y", "n", "e"],
-                default="y"
-            ).lower()
-
-            if choice == 'y':
-                git_integration.commit(commit_message)
-                rich.print("[bold green]✔ Commit successful![/bold green]")
-                break
-            elif choice == 'e':
-                commit_message = _handle_edit_flow(commit_message)
-            else:
-                rich.print("[yellow]Commit aborted.[/yellow]")
-                break
 
     except git_integration.NoStagedChanges as e:
         rich.print(f"[bold red]Error:[/bold red] {e}")
@@ -117,6 +129,9 @@ def main(
         rich.print(f"[bold red]Error:[/bold red] {e}")
         available = prompt_manager.list_styles()
         rich.print(f"Please choose from available styles: {available}")
+        raise typer.Exit(code=1)
+    except llm_provider.OllamaConnectionError as e:
+        rich.print(f"[bold red]Ollama Error:[/bold red] {e}")
         raise typer.Exit(code=1)
     except Exception as e:
         rich.print(f"[bold red]An unexpected error occurred:[/bold red] {e}")

@@ -44,7 +44,7 @@ def test_get_ollama_model_default():
     Test that get_ollama_model() returns the default value
     when the environment variable is not set.
     """
-    assert config.get_ollama_model() == "llama3"
+    assert config.get_ollama_model() == "llama3.2"
 
 
 def test_get_ollama_model_override(monkeypatch):

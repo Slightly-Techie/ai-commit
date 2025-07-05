@@ -29,4 +29,4 @@ def get_ollama_model() -> str:
     - Defaults to "llama3".
     - Can be overridden by the OLLAMA_MODEL environment variable.
     """
-    return _get_env_var("OLLAMA_MODEL", "llama3")
+    return _get_env_var("OLLAMA_MODEL", "llama3.2")
